@@ -10,7 +10,7 @@ WORKDIR /app
 RUN chown -R www-data:www-data /app
 RUN chmod -R 775 /app
 
-RUN cp /app/localhost.conf /etc/nginx/sites-available
+RUN cp /app/.docker/nginx/default.conf  /etc/nginx/sites-available
 RUN ln -s /etc/nginx/sites-available/localhost.conf /etc/nginx/sites-enabled
 
 CMD service php8.2-fpm start && service nginx start && tail -F /var/log/nginx/access.log
