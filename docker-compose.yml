@@ -10,7 +10,7 @@ services:
       - ./:/var/www/html:cached
       - ./.docker/nginx:/etc/nginx/conf.d
     networks:
-      - demo-app-network
+      - app-network
     depends_on:
       - app
 
@@ -21,38 +21,37 @@ services:
         uid: 1000
       context: ./.docker/app
       dockerfile: Dockerfile
-    image: demo-app
-    container_name: demo-app
+    image: app
+    container_name: app
     restart: unless-stopped
     ports: 
         - 6001:6001
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html:cached
-      - ./.docker/app/php-fpm.ini:/usr/local/etc/php/conf.d/99-app.ini
     networks:
-      - demo-app-network
+      - app-network
     depends_on:
       - database
 
   database:
     image: mariadb:10.5.8
-    container_name: db
+    container_name: app-db
     restart: unless-stopped
     ports:
       - 3304:3304
     volumes:
-      - demo-app-volume:/var/lib/mysql
+      - app-volume:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_USER=${DB_USERNAME}
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_DATABASE}
     networks:
-      - demo-app-network
+      - app-network
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: demo-app-phpmyadmin
+    container_name: app-phpmyadmin
     restart: unless-stopped
     tty: true
     depends_on:
@@ -64,11 +63,11 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       UPLOAD_LIMIT: 1000M
     networks:
-      - demo-app-network
+      - app-network
 networks:
-  demo-app-network:
+  app-network:
     driver: bridge
 
 volumes:
-  demo-app-volume:
+  app-volume:
     driver: local

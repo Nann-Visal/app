@@ -1,35 +1,18 @@
-FROM php:8.2.0-fpm
-ARG user
-ARG uid
-# Install Dependencies
-RUN apt-get update && apt-get install -y git curl libpng-dev libonig-dev libxml2-dev zip unzip
+FROM debian:latest
+RUN apt update
+RUN apt install php -y
+RUN apt install -y php8.2-fpm php8.2-ctype php8.2-curl php8.2-dom php8.2-Fileinfo
+RUN apt install -y filter php8.2-Mbstring php8.2-pdo php8.2-Tokenizer php8.2-XML php8.2-mysql
+RUN apt install -y nginx
 
-#install some base extensions
-RUN apt-get install -y \
-    libzip-dev \
-    zip \
-    zlib1g-dev\
-    && docker-php-ext-install zip \
-    && docker-php-ext-install gd
-# Clear Cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY . /app
+WORKDIR /app
+RUN chown -R www-data:www-data /app
+RUN chmod -R 775 /app
 
-# Install PHP extensions
-RUN docker-php-ext-install sockets mysqli pdo pdo_mysql intl mbstring exif pcntl bcmath gd
+RUN cp /app/localhost.conf /etc/nginx/sites-available
+RUN ln -s /etc/nginx/sites-available/localhost.conf /etc/nginx/sites-enabled
 
-#Install Node Js and Npm
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-
-RUN apt-get install -y nodejs
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
-
-# Set working directory
-WORKDIR /var/www
-RUN chown -R www-data:www-data /var/www
-USER $user
+CMD service php8.2-fpm start && service nginx start && tail -F /var/log/nginx/access.log
+#CMD service php8.2-fpm start && nginx -g 'daemon off;'
+EXPOSE 80

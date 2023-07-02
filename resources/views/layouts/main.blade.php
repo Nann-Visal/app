@@ -32,27 +32,25 @@
               </li>
             @endauth
           </ul>
-          <form class="d-flex" role="search">
-            <ul class="navbar-nav ml-auto">
-              @guest
-                <li class="nav-item mx-1"><a href="{{route('login')}}" class="btn btn-outline-primary"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a></li>
-                <li class="nav-item mx-1"><a href="{{route('register')}}" class="btn btn-outline-primary"><i class="bi bi-person-plus-fill me-1"></i></i>Register</a></li>
-              @else
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{Auth::user()->name}}
-                  </a>
-                  <ul class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                      @csrf
-                      <button class="dropdown-item">Logout</button>
-                    </form>
-                  </ul>
-                </li>
-              @endguest
-            </ul>
-          </form>
+          <ul class="navbar-nav ml-auto">
+            @guest
+              <li class="nav-item mx-1"><a href="{{route('login')}}" class="btn btn-outline-primary"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a></li>
+              <li class="nav-item mx-1"><a href="{{route('register')}}" class="btn btn-outline-primary"><i class="bi bi-person-plus-fill me-1"></i></i>Register</a></li>
+            @else
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{Auth::user()->name}}
+                </a>
+                <ul class="dropdown-menu">
+                  <a class="dropdown-item" href="#">Settings</a>
+                  <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button  class="dropdown-item">Logout</button>
+                  </form>
+                </ul>
+              </li>
+            @endguest
+          </ul>
         </div>
       </div>
     </nav>
